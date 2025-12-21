@@ -1,15 +1,36 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/src/supabaseClient";
+import { Session } from "@supabase/supabase-js";
 
 export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    // Get current session on load
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
+
+    // Listen for auth changes (sign in / sign out)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    console.log("listener", listener);
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -18,8 +39,7 @@ export default function SignInPage() {
         email,
         password,
       });
-      console.log(data, error);
-      setIsSignedIn(true);
+      console.log("console from signin", data, error);
       alert("Signed in successfully!");
       router.push("/game");
     } else {

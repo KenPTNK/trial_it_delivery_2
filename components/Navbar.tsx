@@ -21,6 +21,8 @@ export default function Navbar() {
       }
     );
 
+    console.log("listener",listener);
+
     return () => {
       listener.subscription.unsubscribe();
     };
