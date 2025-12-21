@@ -5,15 +5,39 @@ import { supabase } from "@/src/supabaseClient";
 import { useState, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function roundToNearestTenth(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
 export default function GamePage() {
+  const router = useRouter();
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [games, setGames] = useState<Array<any> | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+
+  // handle delte game
+  const handleDeleteGame = async (gameId: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this game?"
+    );
+
+    if (!confirmed) return;
+
+    const { error } = await supabase.from("games").delete().eq("id", gameId);
+
+    if (error) {
+      console.error("Delete error:", error);
+      alert("Failed to delete the game");
+      return;
+    }
+
+    // update UI immediately
+    setGames((prev) =>
+      prev ? prev.filter((game) => game.id !== gameId) : prev
+    );
+  };
 
   // 🔹 Get auth session
   useEffect(() => {
@@ -81,6 +105,11 @@ export default function GamePage() {
               platform={game.platform}
               releaseYear={game.year}
               rating={roundToNearestTenth(game.rating)}
+              isAuthenticated={!!session}
+              onEdit={() => {
+                router.push(`/game/${game.id}/edit`);
+              }}
+              onDelete={() => handleDeleteGame(game.id)}
             />
           ))}
         </div>
