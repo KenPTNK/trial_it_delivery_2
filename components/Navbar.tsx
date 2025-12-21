@@ -8,8 +8,8 @@ export default function Navbar() {
         <Link href="/" className="hover:underline">
           Home
         </Link>
-        <Link href="/search" className="hover:underline">
-          Search Game
+        <Link href="/game" className="hover:underline">
+          Game
         </Link>
         <Link
           href="/auth"
