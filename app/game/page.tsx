@@ -1,4 +1,4 @@
-import Dropdown from '@/components/Dropdown';
+import GameCard from '@/components/GameCard';
 import SearchBar from '@/components/SearchBar';
 
 export default function SearchPage() {
@@ -8,7 +8,7 @@ export default function SearchPage() {
 
       <SearchBar />
 
-      
+      <GameCard />
 
       <button className="mt-6 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
         Search
