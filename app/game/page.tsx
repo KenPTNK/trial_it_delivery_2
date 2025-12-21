@@ -4,6 +4,10 @@ import GameCard from "@/components/GameCard";
 import { supabase } from "@/src/supabaseClient";
 import { useState, useEffect } from "react";
 
+function roundToNearestTenth(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
 export default function GamePage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [games, setGames] = useState<Array<any> | null>(null);
@@ -41,7 +45,7 @@ export default function GamePage() {
               genre={game.genre}
               platform={game.platform}
               releaseYear={game.year}
-              rating={game.rating}
+              rating={roundToNearestTenth(game.rating)}
             />
           ))}
         </div>
